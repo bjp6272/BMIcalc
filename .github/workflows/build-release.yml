@@ -17,44 +17,19 @@ jobs:
       with:
         python-version: '3.11'
 
-    - name: Show environment info
-      run: |
-        python --version
-        where python
-        pip --version
-      shell: cmd
-
     - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        python -m pip install pyinstaller PyQt5
-        python -m pip list
-      shell: cmd
-      continue-on-error: false
-
-    - name: List files
-      run: |
-        dir
-        dir translations
-      shell: cmd
+      run: pip install pyinstaller PyQt5
 
     - name: Build with PyInstaller
-      run: |
-        python -m PyInstaller BMIcalc-Windows.spec 2>&1
-      shell: cmd
-      continue-on-error: false
+      run: python -m PyInstaller --onefile --windowed --name BMIcalc-Windows --add-data "translations;translations" bmi_app.py
 
-    - name: Check dist folder
-      run: |
-        dir dist
-      shell: cmd
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: BMIcalc-Windows
+        path: dist/BMIcalc-Windows.exe
 
     - name: Create Release
-      uses: ncipollo/release-action@v1
+      uses: softprops/action-gh-release@v2
       with:
-        artifacts: "dist/BMIcalc-Windows.exe"
-        token: ${{ secrets.GITHUB_TOKEN }}
-        tag: ${{ github.ref_name }}
-        name: Release ${{ github.ref_name }}
-        draft: false
-        prerelease: false
+        files: dist/BMIcalc-Windows.exe
