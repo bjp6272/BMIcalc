@@ -25,7 +25,7 @@ jobs:
 
     - name: Build with PyInstaller
       run: |
-        pyinstaller --onefile --windowed --name BMIcalc-Windows bmi_app.py
+        pyinstaller --onefile --windowed --name BMIcalc-Windows --add-data "translations;translations" bmi_app.py
       shell: powershell
 
     - name: List dist folder
