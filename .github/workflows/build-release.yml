@@ -17,16 +17,32 @@ jobs:
       with:
         python-version: '3.11'
 
+    - name: Show environment info
+      run: |
+        python --version
+        where python
+        pip --version
+      shell: cmd
+
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         python -m pip install pyinstaller PyQt5
+        python -m pip list
+      shell: cmd
+      continue-on-error: false
+
+    - name: List files
+      run: |
+        dir
+        dir translations
       shell: cmd
 
     - name: Build with PyInstaller
       run: |
-        python -m PyInstaller BMIcalc-Windows.spec
+        python -m PyInstaller BMIcalc-Windows.spec 2>&1
       shell: cmd
+      continue-on-error: false
 
     - name: Check dist folder
       run: |
