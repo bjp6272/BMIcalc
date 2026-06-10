@@ -7,7 +7,7 @@
 ![License](https://img.shields.io/badge/License-MIT-yellow.svg)
 ![Version](https://img.shields.io/badge/Version-0.0.1-orange.svg)
 
-**SimpleHIS 团队出品**
+**bjp6272 出品**
 
 *A simple, cross-platform BMI Calculator*
 
@@ -145,6 +145,6 @@ BMIcalc/
 
 <div align="center">
 
-**Made with ❤️ by SimpleHIS Team**
+**Made with ❤️ by bjp6272**
 
 </div>
