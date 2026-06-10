@@ -7,12 +7,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [windows-latest, macos-latest, ubuntu-latest]
-
+  build-windows:
+    runs-on: windows-latest
     steps:
     - uses: actions/checkout@v4
 
@@ -27,57 +23,32 @@ jobs:
         pip install pyinstaller
         pip install PyQt5
 
-    - name: Build with PyInstaller (Windows)
-      if: matrix.os == 'windows-latest'
+    - name: Build with PyInstaller
       run: |
         pyinstaller --onefile --windowed --name BMIcalc-Windows bmi_app.py
       shell: powershell
 
-    - name: Build with PyInstaller (macOS)
-      if: matrix.os == 'macos-latest'
-      run: |
-        pyinstaller --onefile --windowed --name BMIcalc-macOS bmi_app.py
-
-    - name: Build with PyInstaller (Linux)
-      if: matrix.os == 'ubuntu-latest'
-      run: |
-        pyinstaller --onefile --name BMIcalc-Linux bmi_app.py
-
-    - name: Upload artifact (Windows)
-      if: matrix.os == 'windows-latest'
+    - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
         name: BMIcalc-Windows
         path: dist/BMIcalc-Windows.exe
 
-    - name: Upload artifact (macOS)
-      if: matrix.os == 'macos-latest'
-      uses: actions/upload-artifact@v4
-      with:
-        name: BMIcalc-macOS
-        path: dist/BMIcalc-macOS.app
-
-    - name: Upload artifact (Linux)
-      if: matrix.os == 'ubuntu-latest'
-      uses: actions/upload-artifact@v4
-      with:
-        name: BMIcalc-Linux
-        path: dist/BMIcalc-Linux
-
   release:
-    needs: build
+    needs: build-windows
     runs-on: ubuntu-latest
     steps:
-    - name: Download all artifacts
+    - name: Download artifact
       uses: actions/download-artifact@v4
+      with:
+        name: BMIcalc-Windows
+        path: ./dist
 
     - name: Create Release
       uses: softprops/action-gh-release@v2
       with:
         files: |
-          BMIcalc-Windows/BMIcalc-Windows.exe
-          BMIcalc-macOS/BMIcalc-macOS.app
-          BMIcalc-Linux/BMIcalc-Linux
+          dist/BMIcalc-Windows.exe
         draft: false
         prerelease: false
       env:
