@@ -15,21 +15,18 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
-        python-version: '3.11'
+        python-version: '3.10'
 
     - name: Install dependencies
-      run: pip install pyinstaller PyQt5
+      run: |
+        pip install --upgrade pip
+        pip install pyinstaller==6.10.0
+        pip install PyQt5==5.15.10
 
     - name: Build with PyInstaller
       run: python -m PyInstaller --onefile --windowed --name BMIcalc-Windows --add-data "translations;translations" bmi_app.py
 
-    - name: Upload artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: BMIcalc-Windows
-        path: dist/BMIcalc-Windows.exe
-
-    - name: Create Release
+    - name: Upload to Release
       uses: softprops/action-gh-release@v2
       with:
         files: dist/BMIcalc-Windows.exe
