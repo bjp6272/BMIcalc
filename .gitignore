@@ -36,7 +36,7 @@ env/
 
 # PyInstaller
 *.manifest
-*.spec
+# *.spec  - keeping BMIcalc-Windows.spec for CI/CD
 
 # Logs
 *.log
