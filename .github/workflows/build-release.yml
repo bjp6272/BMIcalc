@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-windows:
+  build-release:
     runs-on: windows-latest
     steps:
     - uses: actions/checkout@v4
@@ -28,28 +28,17 @@ jobs:
         pyinstaller --onefile --windowed --name BMIcalc-Windows bmi_app.py
       shell: powershell
 
-    - name: Upload artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: BMIcalc-Windows
-        path: dist/BMIcalc-Windows.exe
-
-  release:
-    needs: build-windows
-    runs-on: ubuntu-latest
-    steps:
-    - name: Download artifact
-      uses: actions/download-artifact@v4
-      with:
-        name: BMIcalc-Windows
-        path: ./dist
+    - name: List dist folder
+      run: |
+        Get-ChildItem -Path dist -Recurse
+      shell: powershell
 
     - name: Create Release
-      uses: softprops/action-gh-release@v2
+      uses: ncipollo/release-action@v1
       with:
-        files: |
-          dist/BMIcalc-Windows.exe
+        artifacts: "dist/BMIcalc-Windows.exe"
+        token: ${{ secrets.GITHUB_TOKEN }}
+        tag: ${{ github.ref_name }}
+        name: Release ${{ github.ref_name }}
         draft: false
         prerelease: false
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
