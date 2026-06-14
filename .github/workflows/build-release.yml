@@ -6,6 +6,10 @@ on:
       - 'v*'
   workflow_dispatch:
 
+permissions:
+  contents: write
+  actions: read
+
 jobs:
   build-release:
     runs-on: windows-latest
@@ -19,29 +23,19 @@ jobs:
 
     - name: Install dependencies
       run: |
-        pip install --upgrade pip
-        pip install pyinstaller==6.10.0
-        pip install PyQt5==5.15.10
+        python -m pip install --upgrade pip
+        python -m pip install pyinstaller PyQt5
 
     - name: Build with PyInstaller
       run: |
-        python -m PyInstaller --onefile --windowed --name BMIcalc-Windows --add-data "translations;translations" bmi_app.py 2>&1 | Tee-Object -FilePath build.log
-      shell: pwsh
+        python -m PyInstaller --onefile --windowed --name BMIcalc-Windows --add-data "translations;translations" bmi_app.py
+      shell: cmd
 
-    - name: Upload build log on failure
-      if: failure()
-      uses: actions/upload-artifact@v4
-      with:
-        name: build-log
-        path: build.log
+    - name: Check dist folder
+      run: dir dist
+      shell: cmd
 
-    - name: Upload build log always
-      uses: actions/upload-artifact@v4
-      with:
-        name: build-log-always
-        path: build.log
-
-    - name: Upload to Release
+    - name: Create Release
       uses: softprops/action-gh-release@v2
       with:
         files: dist/BMIcalc-Windows.exe
